@@ -1,0 +1,86 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Location Table</h3>
+
+<!-- Filter Inputs -->
+<div class="mb-3">
+    <label>Warehouse ID:</label>
+    <input @bind="WhId" class="form-control" style="width: 200px;" />
+
+    <label>Hall ID:</label>
+    <input @bind="HallId" class="form-control" style="width: 200px;" />
+
+    <label>Aisle ID:</label>
+    <input @bind="AisleId" class="form-control" style="width: 200px;" />
+
+    <button class="btn btn-primary mt-2" @onclick="FetchFilteredData">Apply Filter</button>
+</div>
+
+<!-- Location Table -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>WhId</th>
+            <th>LocationId</th>
+            <th>ShortLocationId</th>
+            <th>NmHallId</th>
+            <th>NmAisle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var location in Locations)
+        {
+            <tr>
+                <td>@location.WhId</td>
+                <td>@location.LocationId</td>
+                <td>@location.ShortLocationId</td>
+                <td>@location.NmHallId</td>
+                <td>@location.NmAisle</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private string WhId { get; set; }
+    private string HallId { get; set; }
+    private string AisleId { get; set; }
+    private List<LocationViewModel> Locations = new();
+
+    public class LocationViewModel
+    {
+        public string WhId { get; set; }
+        public string LocationId { get; set; }
+        public string ShortLocationId { get; set; }
+        public string NmHallId { get; set; }
+        public string NmAisle { get; set; }
+    }
+
+    private async Task FetchFilteredData()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("WebApiClient");
+            var url = $"api/locations/filter?whId={WhId}&hallId={HallId}&aisleId={AisleId}";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Locations = await response.Content.ReadFromJsonAsync<List<LocationViewModel>>();
+                StateHasChanged(); // Ensure the UI is updated
+                Console.WriteLine("Filtered data loaded successfully");
+            }
+            else
+            {
+                Console.WriteLine($"Error fetching filtered data: {response.ReasonPhrase}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching filtered data: {ex.Message}");
+        }
+    }
+}

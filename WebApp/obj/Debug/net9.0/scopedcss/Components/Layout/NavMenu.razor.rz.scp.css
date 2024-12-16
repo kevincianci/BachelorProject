@@ -1,0 +1,119 @@
+/* NORMAL Color Palette */
+:root[b-cfr3pjxbop] {
+    --turquoise: #44dccb;
+    --white: #ffffff;
+    --heavy-metal: #1b1d1c;
+    --alto: #dcdcdc;
+}
+
+/* Navbar Styling */
+.custom-navbar[b-cfr3pjxbop] {
+    background-color: #44dccb; /* Turquoise background */
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 100px;
+}
+
+.navbar-brand[b-cfr3pjxbop] {
+    font-size: 1.5rem; /* Adjust the font size as needed */
+    width: 600px; /* Adjust the width as needed */
+    height: 100px;
+}
+
+/* Brand Logo Styling */
+.brand-logo[b-cfr3pjxbop] {
+    height: 100px; /* Adjust the height as needed */
+}
+
+/* Navbar Links */
+.navbar-nav .nav-link[b-cfr3pjxbop] {
+    color: var(--white);
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav .nav-link i[b-cfr3pjxbop] {
+    margin-right: 0.5rem;
+}
+
+.navbar-nav .nav-link:hover[b-cfr3pjxbop],
+.navbar-nav .nav-link.active[b-cfr3pjxbop] {
+    color: var(--heavy-metal);
+    background-color: var(--alto);
+    border-radius: 4px;
+}
+
+/* Toggler Button */
+.navbar-toggler[b-cfr3pjxbop] {
+    border: none;
+    background-color: transparent;
+    padding: 0.5rem;
+}
+
+.navbar-toggler-icon[b-cfr3pjxbop] {
+    width: 25px;
+    height: 3px;
+    background-color: var(--white);
+    display: block;
+    position: relative;
+}
+
+.navbar-toggler-icon[b-cfr3pjxbop]::before,
+.navbar-toggler-icon[b-cfr3pjxbop]::after {
+    content: "";
+    width: 25px;
+    height: 3px;
+    background-color: var(--white);
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler-icon[b-cfr3pjxbop]::before {
+    top: -8px;
+}
+
+.navbar-toggler-icon[b-cfr3pjxbop]::after {
+    top: 8px;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon[b-cfr3pjxbop]::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon[b-cfr3pjxbop]::after {
+    transform: rotate(-45deg);
+    top: 0;
+}
+
+/* Mobile Styling */
+@media (max-width: 991px) {
+    .navbar-nav[b-cfr3pjxbop] {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-item[b-cfr3pjxbop] {
+        width: 100%;
+        text-align: left;
+    }
+
+    .navbar-brand[b-cfr3pjxbop] {
+        width: 80%;
+    }
+
+    .brand-logo[b-cfr3pjxbop] {
+        height: 50px; /* Adjusted for smaller screens */
+    }
+
+    .collapse[b-cfr3pjxbop] {
+        background-color: var(--turquoise);
+    }
+}

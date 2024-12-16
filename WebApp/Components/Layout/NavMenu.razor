@@ -1,0 +1,50 @@
+﻿@code {
+    private bool isNavbarExpanded = false;
+
+    private void ToggleNavbar()
+    {
+        isNavbarExpanded = !isNavbarExpanded;
+    }
+}
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid">
+        <!-- NORMAL Logo -->
+        <a class="navbar-brand" href="/">
+            <img src="images/Normal_logo.png" alt="NORMAL Logo" class="brand-logo" />
+        </a>
+
+        <!-- Toggler Button for Mobile View -->
+        <button
+            class="navbar-toggler"
+            type="button"
+            @onclick="ToggleNavbar"
+            aria-controls="navbarNav"
+            aria-expanded="@isNavbarExpanded.ToString().ToLower()"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible Navbar -->
+        <div class="collapse navbar-collapse @(isNavbarExpanded ? "show" : "")" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        <i class="bi bi-house-door-fill"></i> Home
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/counter">
+                        <i class="bi bi-plus-square-fill"></i> Counter
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/weather">
+                        <i class="bi bi-list-nested"></i> Weather
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
