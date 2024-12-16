@@ -36,6 +36,27 @@ namespace WebApi.Controllers
             return Ok(new { Token = token, User = user });
         }
 
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+            {
+                return BadRequest(new { Message = "Username already exists." });
+            }
+
+            var user = new User
+            {
+                Username = request.Username,
+                Password = HashPassword(request.Password),
+                Role = request.Role
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "User created successfully." });
+        }
+
         private string GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
@@ -69,10 +90,26 @@ namespace WebApi.Controllers
             }
         }
 
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
+        }
+
         public class LoginRequest
         {
             public string Username { get; set; }
             public string Password { get; set; }
+        }
+
+        public class CreateUserRequest
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Role { get; set; }
         }
     }
 }
