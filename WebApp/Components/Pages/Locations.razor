@@ -1,0 +1,97 @@
+@page "/locations"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Locations</h3>
+
+<div class="filter-container">
+    <div class="form-group">
+        <label for="whId">Warehouse ID:</label>
+        <input type="text" id="whId" @bind="WhId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="hallId">Hall ID:</label>
+        <input type="text" id="hallId" @bind="HallId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="aisleId">Aisle ID:</label>
+        <input type="text" id="aisleId" @bind="AisleId" class="form-control" />
+    </div>
+    <button class="btn btn-primary" @onclick="FetchFilteredData">Filter</button>
+</div>
+
+@if (LocationList != null && LocationList.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>WhId</th>
+                <th>LocationId</th>
+                <th>ShortLocationId</th>
+                <th>NmHallId</th>
+                <th>NmAisle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var location in LocationList)
+            {
+                <tr>
+                    <td>@location.WhId</td>
+                    <td>@location.LocationId</td>
+                    <td>@location.ShortLocationId</td>
+                    <td>@location.NmHallId</td>
+                    <td>@location.NmAisle</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string WhId { get; set; }
+    private string HallId { get; set; }
+    private string AisleId { get; set; }
+    private List<LocationViewModel> LocationList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await GetTokenAsync();
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private async Task FetchFilteredData()
+    {
+        var token = await GetTokenAsync();
+        Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var url = $"api/locations/filter?whId={WhId}&hallId={HallId}&aisleId={AisleId}";
+        var response = await Http.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            LocationList = await response.Content.ReadFromJsonAsync<List<LocationViewModel>>();
+        }
+        else
+        {
+            Console.WriteLine($"Error fetching filtered data: {response.ReasonPhrase}");
+        }
+    }
+
+    private async Task<string> GetTokenAsync()
+    {
+        return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+    }
+
+    public class LocationViewModel
+    {
+        public string WhId { get; set; }
+        public string LocationId { get; set; }
+        public string ShortLocationId { get; set; }
+        public string NmHallId { get; set; }
+        public string NmAisle { get; set; }
+    }
+}

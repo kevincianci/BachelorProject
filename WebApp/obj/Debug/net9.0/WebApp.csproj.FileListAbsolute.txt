@@ -192,3 +192,4 @@ C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\obj\Debug\net9.0\WebApp.csproj.
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\obj\Debug\net9.0\scopedcss\Components\Pages\Home.razor.rz.scp.css
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\obj\Debug\net9.0\compressed\tya4lddc6q-0d6wtw9hh1.gz
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\obj\Debug\net9.0\compressed\woqmgvgciv-0d6wtw9hh1.gz
+C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\obj\Debug\net9.0\WebApp.sourcelink.json

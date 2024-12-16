@@ -1,0 +1,115 @@
+@page "/file-upload"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>File Upload</h3>
+
+<div class="file-upload-container">
+    <InputFile OnChange="HandleFileSelected" />
+    <button class="btn btn-primary" @onclick="UploadFile">Upload</button>
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <div class="alert alert-info mt-2">@Message</div>
+    }
+</div>
+
+@if (Locations != null && Locations.Any())
+{
+    <h3>Uploaded Data Preview</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>WhId</th>
+                <th>LocationId</th>
+                <th>ShortLocationId</th>
+                <th>NmHallId</th>
+                <th>NmAisle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var location in Locations)
+            {
+                <tr>
+                    <td>@location.WhId</td>
+                    <td>@location.LocationId</td>
+                    <td>@location.ShortLocationId</td>
+                    <td>@location.NmHallId</td>
+                    <td>@location.NmAisle</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IBrowserFile selectedFile;
+    private string Message { get; set; }
+    private List<LocationViewModel> Locations = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = GetToken();
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task UploadFile()
+    {
+        if (selectedFile == null)
+        {
+            Message = "Please select a file.";
+            return;
+        }
+
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(selectedFile.OpenReadStream());
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(selectedFile.ContentType);
+        content.Add(fileContent, "file", selectedFile.Name);
+
+        var token = GetToken();
+        Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var response = await Http.PostAsync("api/locations/upload", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Message = "File uploaded successfully.";
+            await LoadLocations();
+        }
+        else
+        {
+            Message = "Error uploading file.";
+        }
+    }
+
+    private async Task LoadLocations()
+    {
+        var response = await Http.GetAsync("api/locations");
+        if (response.IsSuccessStatusCode)
+        {
+            Locations = await response.Content.ReadFromJsonAsync<List<LocationViewModel>>();
+        }
+    }
+
+    private string GetToken()
+    {
+        return (string)JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken").Result;
+    }
+
+    public class LocationViewModel
+    {
+        public string WhId { get; set; }
+        public string LocationId { get; set; }
+        public string ShortLocationId { get; set; }
+        public string NmHallId { get; set; }
+        public string NmAisle { get; set; }
+    }
+}
