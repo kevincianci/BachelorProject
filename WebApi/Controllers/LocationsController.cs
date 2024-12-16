@@ -71,4 +71,11 @@ public class LocationsController : ControllerBase
         _context.SaveChanges();
         return Ok();
     }
+
+    [HttpGet]
+public async Task<IActionResult> GetAllLocations()
+{
+    var locations = await _context.Locations.ToListAsync();
+    return Ok(locations);
+}
 }
