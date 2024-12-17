@@ -7,15 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddHttpClient("WebApiClient", client =>
+builder.Services.AddHttpClient("NormalAPI", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["WebApi:BaseUrl"]);
+    client.BaseAddress = new Uri("http://localhost:5205/"); // Ensure this matches your API's URL and port
 });
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(builder.Configuration["Cors:AllowedOrigins"])
+        policy.WithOrigins("http://localhost:5117") // Correct protocol
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -35,6 +35,9 @@ app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseAntiforgery(); // Add this line to use anti-forgery middleware
-app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
 app.Run();

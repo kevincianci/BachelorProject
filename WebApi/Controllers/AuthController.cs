@@ -33,7 +33,7 @@ namespace WebApi.Controllers
             }
 
             var token = GenerateJwtToken(user);
-            return Ok(new { Token = token, User = user });
+            return Ok(new { Token = token });
         }
 
         [HttpPost("create")]
@@ -62,8 +62,7 @@ namespace WebApi.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Name, user.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
