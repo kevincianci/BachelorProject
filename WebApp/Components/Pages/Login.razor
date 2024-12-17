@@ -16,7 +16,7 @@
             <label for="password">Password:</label>
             <input type="password" id="password" @bind="password" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary" @onclick="PerformLogin">Login</button>
+        <button type="submit" class="btn btn-primary">Login</button>
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
             <div class="alert alert-danger mt-2">@ErrorMessage</div>
@@ -31,9 +31,6 @@
 
     private async Task PerformLogin()
     {
-        System.Diagnostics.Debugger.Break(); // Pause execution for debugging
-        Console.WriteLine("Did this shit run");
-
         try
         {
             var client = HttpClientFactory.CreateClient("NormalAPI");

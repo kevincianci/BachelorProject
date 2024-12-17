@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor", policy =>
     {
-        policy.WithOrigins("http://localhost:5117")
+        policy.WithOrigins("https://localhost:7194") // Blazor HTTPS URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -87,14 +87,26 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
+else
+{
+    app.UseHttpsRedirection(); // Use redirection for production or explicitly configure for dev
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NORMAL Logistics API V1");
+        c.RoutePrefix = string.Empty; // Swagger available at root URL
+    });
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCors("AllowBlazor"); // Apply the CORS policy before UseRouting
 app.UseRouting();
-app.UseCors("AllowBlazor"); // Apply the CORS policy
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery(); // Use antiforgery middleware
 
-app.MapControllers();
+app.MapControllers(); // Ensure this is here to map API routes
+
 app.Run();
