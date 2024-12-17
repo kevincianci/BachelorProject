@@ -12,21 +12,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowBlazor", policy =>
     {
-        policy.WithOrigins(builder.Configuration["Cors:AllowedOrigins"])
+        policy.WithOrigins("http://localhost:5117")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "NORMAL Logistics API", Version = "v1" });
+
+    // Add JWT Authentication
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -36,73 +37,64 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement{
     {
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
+            Reference = new OpenApiReference
             {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        },
+        new string[] { }
+    }});
 });
 
 // Configure JWT authentication
-var jwtKey = builder.Configuration["Jwt:Key"];
-if (string.IsNullOrEmpty(jwtKey))
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = jwtSettings["Key"];
+if (string.IsNullOrEmpty(key))
 {
-    throw new InvalidOperationException("JWT Key is missing from configuration.");
+    throw new InvalidOperationException("The JWT key is missing or invalid in the configuration.");
 }
 
-var key = Encoding.ASCII.GetBytes(jwtKey);
+var keyBytes = Encoding.UTF8.GetBytes(key);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
         };
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddAntiforgery(); // Add antiforgery services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NORMAL Logistics API V1");
-        c.RoutePrefix = string.Empty;
-    });
-}
-else
-{
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-app.UseCors();
+app.UseCors("AllowBlazor"); // Apply the CORS policy
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery(); // Use antiforgery middleware
 
 app.MapControllers();
 app.Run();

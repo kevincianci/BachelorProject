@@ -1,29 +1,32 @@
-﻿@page "/"
+﻿@page "/home"
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-<h3>Welcome to the Logistics Management System</h3>
+<h3>Welcome to the Home Page</h3>
 
 <div class="home-container">
-    <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+    <button class="btn btn-success" @onclick="NavigateToFileUpload">File Upload</button>
+    <button class="btn btn-info ml-2" @onclick="NavigateToLocations">Locations</button>
+    <button class="btn btn-danger ml-2" @onclick="Logout">Logout</button>
 </div>
 
 @code {
-    private void NavigateToLogin()
+    private void NavigateToFileUpload()
     {
-        var token = GetToken();
-        if (string.IsNullOrEmpty(token))
-        {
-            NavigationManager.NavigateTo("/login");
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/file-upload");
-        }
+        NavigationManager.NavigateTo("/file-upload");
     }
 
-    private string GetToken()
+    private void NavigateToLocations()
     {
-        return (string)JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken").Result;
+        NavigationManager.NavigateTo("/locations");
+    }
+
+    private async Task Logout()
+    {
+        // Clear the token from localStorage
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+
+        // Redirect to Login Page
+        NavigationManager.NavigateTo("/login");
     }
 }

@@ -9,7 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient("NormalAPI", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5205/"); // Ensure this matches your API's URL and port
+    client.BaseAddress = new Uri("http://localhost:5205/"); // Update to match your API's URL and port
 });
 builder.Services.AddCors(options =>
 {
