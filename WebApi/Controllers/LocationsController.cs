@@ -20,15 +20,17 @@ namespace WebApi.Controllers
             _logger = logger;
         }
 
-        // GET: api/locations/filter?whId={whId}&hallId={hallId}&aisleId={aisleId}
+        // GET: api/locations/filter?whId={whId}&hallId={hallId}&aisleId={aisleId}&page={page}&pageSize={pageSize}
         [HttpGet("filter")]
         [Authorize]
         public async Task<IActionResult> GetFilteredLocations(
             [FromQuery] string? whId,
             [FromQuery] string? hallId,
-            [FromQuery] string? aisleId)
+            [FromQuery] string? aisleId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            _logger.LogInformation("GetFilteredLocations called with parameters: whId={WhId}, hallId={HallId}, aisleId={AisleId}", whId, hallId, aisleId);
+            _logger.LogInformation("GetFilteredLocations called with parameters: whId={WhId}, hallId={HallId}, aisleId={AisleId}, page={Page}, pageSize={PageSize}", whId, hallId, aisleId, page, pageSize);
 
             var query = _context.Locations.AsQueryable();
 
@@ -50,18 +52,32 @@ namespace WebApi.Controllers
                 query = query.Where(loc => loc.NmAisle == aisleId);
             }
 
-            var result = await query.Select(loc => new
-            {
-                loc.WhId,
-                loc.LocationId,
-                loc.ShortLocationId,
-                loc.NmHallId,
-                loc.NmAisle
-            }).ToListAsync();
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var result = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(loc => new
+                {
+                    loc.WhId,
+                    loc.LocationId,
+                    loc.ShortLocationId,
+                    loc.NmHallId,
+                    loc.NmAisle
+                })
+                .ToListAsync();
 
             _logger.LogInformation("Returning {Count} locations", result.Count);
 
-            return Ok(result);
+            return Ok(new
+            {
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageSize = pageSize,
+                Items = result
+            });
         }
 
         // POST: api/locations/upload
@@ -76,7 +92,8 @@ namespace WebApi.Controllers
 
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
-            return Ok();
+
+            return CreatedAtAction(nameof(GetFilteredLocations), new { id = location.LocationId }, location);
         }
 
         [HttpGet]
