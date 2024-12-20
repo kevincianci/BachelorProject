@@ -1,0 +1,75 @@
+@page "/print-queue"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Print Queue</h3>
+
+@if (PrintJobs == null)
+{
+    <p>Loading...</p>
+}
+else if (!PrintJobs.Any())
+{
+    <p>No print jobs in the queue.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Label Name</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in PrintJobs)
+            {
+                <tr>
+                    <td>@job.Id</td>
+                    <td>@job.LabelName</td>
+                    <td>@job.Status</td>
+                    <td>@job.CreatedAt.ToString("g")</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => CancelPrintJob(job.Id)">Cancel</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<PrintJob> PrintJobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPrintQueue();
+    }
+
+    private async Task LoadPrintQueue()
+    {
+        var response = await Http.GetFromJsonAsync<List<PrintJob>>("api/printer/printqueue");
+        PrintJobs = response ?? new List<PrintJob>();
+    }
+
+    private async Task CancelPrintJob(int id)
+    {
+        var response = await Http.DeleteAsync($"api/printer/printjob/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            PrintJobs = PrintJobs.Where(job => job.Id != id).ToList();
+        }
+    }
+
+    public class PrintJob
+    {
+        public int Id { get; set; }
+        public string LabelName { get; set; }
+        public string Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+}

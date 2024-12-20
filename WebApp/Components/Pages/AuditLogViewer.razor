@@ -1,0 +1,75 @@
+@page "/audit-logs"
+@inject HttpClient Http
+
+<h3>Audit Logs</h3>
+
+<div class="filter-container">
+    <label for="filter">Filter by Action:</label>
+    <input id="filter" @bind="ActionFilter" class="form-control" />
+    <button class="btn btn-primary" @onclick="FilterLogs">Apply Filter</button>
+</div>
+
+@if (AuditLogs == null)
+{
+    <p>Loading...</p>
+}
+else if (!AuditLogs.Any())
+{
+    <p>No logs found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Log ID</th>
+                <th>Action</th>
+                <th>Details</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in AuditLogs)
+            {
+                <tr>
+                    <td>@log.Id</td>
+                    <td>@log.Action</td>
+                    <td>@log.Details</td>
+                    <td>@log.Timestamp.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string ActionFilter = string.Empty;
+    private List<AuditLog> AuditLogs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLogs();
+    }
+
+    private async Task LoadLogs()
+    {
+        AuditLogs = await Http.GetFromJsonAsync<List<AuditLog>>("api/report");
+    }
+
+    private async Task FilterLogs()
+    {
+        var response = await Http.GetAsync($"api/report?filter={ActionFilter}");
+        if (response.IsSuccessStatusCode)
+        {
+            AuditLogs = await response.Content.ReadFromJsonAsync<List<AuditLog>>();
+        }
+    }
+
+    public class AuditLog
+    {
+        public int Id { get; set; }
+        public string Action { get; set; }
+        public string Details { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+}
