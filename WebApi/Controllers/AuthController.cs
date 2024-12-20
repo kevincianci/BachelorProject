@@ -16,23 +16,34 @@ namespace WebApi.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _context;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IConfiguration configuration, AppDbContext context)
+        public AuthController(IConfiguration configuration, AppDbContext context, ILogger<AuthController> logger)
         {
             _context = context;
             _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            _logger.LogInformation("Login endpoint called with username: {Username}", request.Username);
+
+            if (!Request.ContentType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { Message = "Content-Type must be application/json." });
+            }
+
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
             if (user == null || !VerifyPassword(request.Password, user.Password))
             {
+                _logger.LogWarning("Invalid login attempt for username: {Username}", request.Username);
                 return Unauthorized(new { Message = "Invalid username or password." });
             }
 
             var token = GenerateJwtToken(user);
+            _logger.LogInformation("Login successful for username: {Username}", request.Username);
             return Ok(new { Token = token });
         }
 

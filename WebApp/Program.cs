@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WebApp.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using WebApp.Components; // Ensure this namespace is correct
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +15,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient("NormalAPI", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7291/"); // HTTPS WebAPI URL
+    client.BaseAddress = new Uri("https://localhost:7291/"); // Correct API URL
 });
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5117", "https://localhost:7194") // Allow both HTTP and HTTPS origins
+        policy.WithOrigins("https://localhost:7194", "http://localhost:5206") // Allow both HTTP and HTTPS origins
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -27,18 +31,21 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 else
 {
-    app.UseHttpsRedirection(); // Use redirection for production or explicitly configure for dev
     app.UseDeveloperExceptionPage();
 }
 
-
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = ""
+});
 app.UseRouting();
 app.UseCors();
 app.UseAuthentication();

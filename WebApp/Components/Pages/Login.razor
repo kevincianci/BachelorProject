@@ -1,20 +1,20 @@
 @page "/login"
-@page "/"
 @inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
 <h3>Login</h3>
+<p>Component Rendered Successfully</p>
 
 <div class="login-container">
-    <form @onsubmit="PerformLogin">
+    <form @onsubmit="HandleSubmit">
         <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" @bind="username" class="form-control" />
+            <input type="text" id="username" @bind="username" @oninput="LogInput" class="form-control" />
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" @bind="password" class="form-control" />
+            <input type="password" id="password" @bind="password" @oninput="LogInput" class="form-control" />
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
         @if (!string.IsNullOrEmpty(ErrorMessage))
@@ -29,48 +29,63 @@
     private string password;
     private string ErrorMessage;
 
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Login component initialized.");
+    }
+
+    private void LogInput()
+    {
+        Console.WriteLine($"Username: {username}, Password: {password}");
+    }
+
+    private async Task HandleSubmit()
+    {
+        // Prevent the default form submission behavior
+        await PerformLogin();
+    }
+
     private async Task PerformLogin()
     {
+        Console.WriteLine("PerformLogin method triggered");
+        Console.WriteLine($"Username: {username}, Password: {password}");
+
         try
         {
             var client = HttpClientFactory.CreateClient("NormalAPI");
             var loginPayload = new { username, password };
 
-            // Log the outgoing HTTP request payload
-            await JSRuntime.InvokeVoidAsync("console.log", $"Outgoing HTTP request payload: {System.Text.Json.JsonSerializer.Serialize(loginPayload)}");
+            var requestContent = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(loginPayload),
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
 
-            var response = await client.PostAsJsonAsync("api/auth/login", loginPayload);
+            Console.WriteLine($"Sending request to: {client.BaseAddress}api/Auth/login");
+            Console.WriteLine($"Request payload: {System.Text.Json.JsonSerializer.Serialize(loginPayload)}");
 
-            // Log the API response status code
-            await JSRuntime.InvokeVoidAsync("console.log", $"API response status code: {response.StatusCode}");
+            var response = await client.PostAsync("api/Auth/login", requestContent);
+
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
 
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
-
-                // Log token storage success
-                await JSRuntime.InvokeVoidAsync("console.log", "Token stored successfully.");
-
-                // Log successful response
-                await JSRuntime.InvokeVoidAsync("console.log", "Login successful");
-
-                // Navigate to the dashboard or other page
+                Console.WriteLine("Login successful, token stored.");
                 NavigationManager.NavigateTo("/home");
             }
             else
             {
-                // Log failed HTTP request with details
-                var errorDetails = await response.Content.ReadAsStringAsync();
-                await JSRuntime.InvokeVoidAsync("console.error", $"Login failed: {response.ReasonPhrase}, Details: {errorDetails}");
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API call failed: {response.ReasonPhrase}, Details: {error}");
                 ErrorMessage = "Invalid username or password.";
             }
         }
         catch (Exception ex)
         {
-            // Log error to the JavaScript console
-            await JSRuntime.InvokeVoidAsync("console.error", $"Error: {ex.Message}");
-            ErrorMessage = "Something went wrong. Please try again.";
+            Console.WriteLine($"Error: {ex.Message}");
+            ErrorMessage = "Something went wrong.";
         }
     }
 

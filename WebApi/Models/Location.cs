@@ -59,6 +59,12 @@ public class Location
     public string? NmVoiceSection { get; set; }
     public string? NmVoicePosition { get; set; }
     public string? NmVoiceLevel { get; set; }
+
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Relationships
+        public ICollection<PrintJob> PrintJobs { get; set; } = new List<PrintJob>();
 }
 
 }

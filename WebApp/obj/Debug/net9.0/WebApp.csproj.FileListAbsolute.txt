@@ -7,7 +7,9 @@ C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\WebApp.deps.js
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\WebApp.runtimeconfig.json
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\WebApp.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\WebApp.pdb
+C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Blazored.LocalStorage.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Humanizer.dll
+C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.AspNetCore.Components.WebAssembly.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.Build.Locator.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.CodeAnalysis.dll
@@ -23,6 +25,7 @@ C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.Enti
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Microsoft.JSInterop.WebAssembly.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\Mono.TextTemplating.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\SQLitePCLRaw.batteries_v2.dll
 C:\Users\kevin\Desktop\BACHELOR - Samuele\WebApp\bin\Debug\net9.0\SQLitePCLRaw.core.dll
