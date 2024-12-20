@@ -1,0 +1,56 @@
+@page "/report-generator"
+@inject HttpClient Http
+
+<h3>Report Generator</h3>
+
+<div class="report-container">
+    <button class="btn btn-success" @onclick="GenerateReport">Generate New Report</button>
+</div>
+
+@if (Reports == null)
+{
+    <p>Loading...</p>
+}
+else if (!Reports.Any())
+{
+    <p>No reports found.</p>
+}
+else
+{
+    <h3>Available Reports</h3>
+    <ul>
+        @foreach (var report in Reports)
+        {
+            <li>@report.Name - Generated on @report.CreatedAt.ToString("g")</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Report> Reports;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReports();
+    }
+
+    private async Task LoadReports()
+    {
+        Reports = await Http.GetFromJsonAsync<List<Report>>("api/report");
+    }
+
+    private async Task GenerateReport()
+    {
+        var response = await Http.PostAsync("api/report/generate", null);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadReports();
+        }
+    }
+
+    public class Report
+    {
+        public string Name { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+}
