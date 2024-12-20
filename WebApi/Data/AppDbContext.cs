@@ -10,5 +10,6 @@ namespace WebApi.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<PrintJob> PrintJobs { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<LabelTemplate> LabelTemplates { get; set; }
     }
 }
