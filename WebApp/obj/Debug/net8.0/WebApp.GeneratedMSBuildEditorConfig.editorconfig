@@ -46,6 +46,10 @@ build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/AuditLogs.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdWRpdExvZ3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/AuditLogViewer.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdWRpdExvZ1ZpZXdlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -62,12 +66,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/PrintLabels.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcmludExhYmVscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/PrintQueue.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcmludFF1ZXVlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/ReportGenerator.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRHZW5lcmF0b3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Pages/Reports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/kevin/Desktop/BACHELOR - Samuele/WebApp/Components/Layout/MainLayout.razor]

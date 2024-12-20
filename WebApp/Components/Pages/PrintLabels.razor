@@ -1,0 +1,31 @@
+@page "/print-labels"
+@inject HttpClient Http
+
+<h3>Print Labels</h3>
+
+<div class="print-labels-container">
+    <PrintQueue />
+</div>
+
+@if (!string.IsNullOrEmpty(PreviewLabel))
+{
+    <h4>Label Preview</h4>
+    <div class="label-preview">
+        <p>@PreviewLabel</p>
+    </div>
+}
+
+@code {
+    private string PreviewLabel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Optionally, you can load initial state or settings
+    }
+
+    private async Task PreviewLabelContent(string labelContent)
+    {
+        // Simulate label content preview logic
+        PreviewLabel = labelContent;
+    }
+}

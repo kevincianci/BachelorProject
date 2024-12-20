@@ -1,24 +1,17 @@
-﻿@namespace WebApp.Components.Layout
+﻿@inherits LayoutComponentBase
 
-@inherits LayoutComponentBase
+<PageTitle>Gjensidige SEP</PageTitle>
 
-<div class="page">
-    <!-- Navbar at the top -->
-    <header class="top-navbar">
-        <NavMenu />
-    </header>
+<div class="page-container">
+    <!-- Navbar -->
+    <NavMenu />
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="main-content">
-        <article class="content">
-            @Body
-        </article>
+        @Body
     </main>
 </div>
 
-<!-- Error UI -->
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+@code {
+    // Add layout-specific logic here if needed
+}
